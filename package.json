@@ -1,0 +1,33 @@
+{
+  "name": "everlist",
+  "version": "0.1.0",
+  "description": "An infinitely scrolling list",
+  "main": "dist/everlist.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/inf0rmer/everlist.git"
+  },
+  "keywords": [
+    "infinite",
+    "list"
+  ],
+  "author": "Bruno Abrantes <hello@brunoabrantes.com> (http://brunoabrantes.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/inf0rmer/everlist/issues"
+  },
+  "homepage": "https://github.com/inf0rmer/everlist",
+  "devDependencies": {
+    "browserify": "^4.1.9",
+    "grunt": "~0.4.2",
+    "grunt-browserify": "^2.1.0",
+    "grunt-contrib-jasmine": "~0.5.2",
+    "grunt-contrib-jshint": "~0.7.2",
+    "grunt-contrib-uglify": "~0.2.7",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-template-jasmine-requirejs": "~0.1.8"
+  }
+}
