@@ -72,6 +72,8 @@ module.exports = function(grunt) {
         src: ['./dist/everlist.js'],
         options: {
           specs: './spec/*Spec.js',
+          vendor: ["./demo/js/lib/jquery.js"],
+          helpers: ['./spec/specHelpers.js'],
           template: require('grunt-template-jasmine-requirejs'),
           templateOptions: {
             requireConfig: {
