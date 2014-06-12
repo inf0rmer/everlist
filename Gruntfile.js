@@ -53,6 +53,7 @@ module.exports = function(grunt) {
           beforeEach: false,
           afterEach: false,
           it: false,
+          xit: false,
           setup: false,
           suite: false,
           teardown: false,
@@ -73,7 +74,6 @@ module.exports = function(grunt) {
         options: {
           specs: './spec/*Spec.js',
           vendor: ["./demo/js/lib/jquery.js"],
-          helpers: ['./spec/specHelpers.js'],
           template: require('grunt-template-jasmine-requirejs'),
           templateOptions: {
             requireConfig: {
