@@ -19,8 +19,10 @@ var Datasource = (function() {
     return this.items[index];
   };
 
-  Datasource.prototype.load = function() {
-    throw new Error('Load logic needs to be implemented');
+  Datasource.prototype.load = function(done) {
+    if (done && typeof done === 'function') {
+      done();
+    }
   };
 
   return Datasource;

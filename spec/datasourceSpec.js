@@ -59,6 +59,19 @@
           expect(this.ds.itemAtIndex(1)).toEqual(stub[1]);
         });
       });
+
+      describe('#load', function() {
+        beforeEach(function() {
+          this.ds = new Datasource();
+        });
+
+        it('executes the given callback', function(done) {
+          this.ds.load(function() {
+            expect(true).toBeTruthy();
+            done();
+          });
+        });
+      });
     });
   });
 }());
