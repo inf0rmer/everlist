@@ -48,7 +48,12 @@ var bind = function(func, context) {
   };
 };
 
+var isArray = Array.isArray || function(obj) {
+  return Object.prototype.toString.call(obj) === '[object Array]';
+};
+
 module.exports = {
   debounce: debounce,
-  bind: bind
+  bind: bind,
+  isArray: isArray
 };

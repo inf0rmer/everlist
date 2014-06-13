@@ -1,4 +1,5 @@
 var utilities = require('./utilities');
+var Datasource = require('./datasource');
 
 // Main object
 var Everlist = (function() {
@@ -18,6 +19,11 @@ var Everlist = (function() {
   function Everlist($el, options) {
     this.$el = $($el);
     this.options = $.extend(defaults, options);
+
+    if (!(this.options.datasource instanceof Datasource)) {
+      this.options.datasource = new Datasource();
+    }
+
     this.initialized = true;
   }
 
@@ -42,6 +48,9 @@ var Everlist = (function() {
   };
 
   Everlist.prototype._load = function() {};
+
+  // Expose submodules
+  Everlist.Datasource = Datasource;
 
   return Everlist;
 }());

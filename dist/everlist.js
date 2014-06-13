@@ -1,6 +1,33 @@
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.everlist=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 var utilities = _dereq_('./utilities');
 
+var Datasource = (function() {
+  function Datasource(items, options) {
+    if (items && !utilities.isArray(items)) {
+      throw new Error('"items" should be an array');
+    }
+
+    this.items = (items) ? Array.prototype.slice.call(items, 0) : [];
+    this.options = options || {};
+  }
+
+  Datasource.prototype.numberOfItems = function() {
+    return this.items.length;
+  };
+
+  Datasource.prototype.itemAtIndex = function(index) {
+    return this.items[index];
+  };
+
+  return Datasource;
+}());
+
+module.exports = Datasource;
+
+},{"./utilities":3}],2:[function(_dereq_,module,exports){
+var utilities = _dereq_('./utilities');
+var Datasource = _dereq_('./datasource');
+
 // Main object
 var Everlist = (function() {
   var defaults, wrapInnerContent;
@@ -19,6 +46,11 @@ var Everlist = (function() {
   function Everlist($el, options) {
     this.$el = $($el);
     this.options = $.extend(defaults, options);
+
+    if (!(this.options.datasource instanceof Datasource)) {
+      this.options.datasource = new Datasource();
+    }
+
     this.initialized = true;
   }
 
@@ -44,6 +76,9 @@ var Everlist = (function() {
 
   Everlist.prototype._load = function() {};
 
+  // Expose submodules
+  Everlist.Datasource = Datasource;
+
   return Everlist;
 }());
 
@@ -64,7 +99,7 @@ $.fn.everlist = function(options) {
 
 module.exports = Everlist;
 
-},{"./utilities":2}],2:[function(_dereq_,module,exports){
+},{"./datasource":1,"./utilities":3}],3:[function(_dereq_,module,exports){
 // Utilities
 var now = Date.now || function() { return new Date().getTime(); };
 
@@ -115,11 +150,16 @@ var bind = function(func, context) {
   };
 };
 
-module.exports = {
-  debounce: debounce,
-  bind: bind
+var isArray = Array.isArray || function(obj) {
+  return Object.prototype.toString.call(obj) === '[object Array]';
 };
 
-},{}]},{},[1])
-(1)
+module.exports = {
+  debounce: debounce,
+  bind: bind,
+  isArray: isArray
+};
+
+},{}]},{},[2])
+(2)
 });
