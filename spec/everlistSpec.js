@@ -33,7 +33,12 @@
 
         it('composes its "options" property using a defaults hash and an argument', function() {
           var everlist = new Everlist('#specimen', {padding: 50});
-          expect(everlist.options).toEqual({padding: 50, interval: 350, datasource: jasmine.any(Everlist.Datasource)});
+          expect(everlist.options).toEqual({
+            padding: 50,
+            interval: 350,
+            datasource: jasmine.any(Everlist.Datasource),
+            renderer: jasmine.any(Everlist.Renderer)
+          });
         });
       });
 
@@ -117,6 +122,15 @@
         it('instantiates a simple datasource if one is not provided', function() {
           var everlist = new Everlist();
           expect((everlist.options.datasource instanceof Everlist.Datasource)).toBeTruthy();
+        });
+      });
+    });
+
+    describe('Renderer', function() {
+      describe('When initializing', function() {
+        it('instantiates a simple renderer if one is not provided', function() {
+          var everlist = new Everlist();
+          expect((everlist.options.renderer instanceof Everlist.Renderer)).toBeTruthy();
         });
       });
     });

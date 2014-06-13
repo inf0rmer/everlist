@@ -63,7 +63,8 @@ module.exports = function(grunt) {
           require: false,
           define: false,
           spyOn: false,
-          requirejs: false
+          requirejs: false,
+          unescape: false
         }
       }
     },
