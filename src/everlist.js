@@ -24,7 +24,7 @@ var Everlist = (function() {
     if (!(this.options.datasource instanceof Datasource)) {
       this.options.datasource = new Datasource();
     }
-    
+
     if (!(this.options.renderer instanceof Renderer)) {
       this.options.renderer = new Renderer();
     }
@@ -52,7 +52,9 @@ var Everlist = (function() {
     }
   };
 
-  Everlist.prototype._load = function() {};
+  Everlist.prototype._load = function() {
+    this.options.datasource.load(function() {});
+  };
 
   // Expose submodules
   Everlist.Datasource = Datasource;
