@@ -45,6 +45,7 @@
       describe('#monitor', function() {
         beforeEach(function(){
           this.everlist = new Everlist('#specimen', {padding: 50});
+          spyOn(this.everlist.options.datasource, 'load');
         });
 
         it('wraps the element in an inner container', function() {
@@ -83,6 +84,20 @@
             expect(loadSpy).not.toHaveBeenCalled();
           });
         });
+      });
+
+      describe('#_load', function() {
+        beforeEach(function(){
+          this.everlist = new Everlist('#specimen', {padding: 50});
+        });
+
+        it('calls the #load method on the datasource', function() {
+          var loadSpy = spyOn(this.everlist.options.datasource, 'load');
+
+          this.everlist._load();
+          expect(loadSpy).toHaveBeenCalledWith(jasmine.any(Function));
+        });
+
       });
 
       describe('#startMonitoring', function() {
