@@ -24,9 +24,10 @@ var Datasource = (function() {
 
 module.exports = Datasource;
 
-},{"./utilities":3}],2:[function(_dereq_,module,exports){
+},{"./utilities":4}],2:[function(_dereq_,module,exports){
 var utilities = _dereq_('./utilities');
 var Datasource = _dereq_('./datasource');
+var Renderer = _dereq_('./renderer');
 
 // Main object
 var Everlist = (function() {
@@ -49,6 +50,10 @@ var Everlist = (function() {
 
     if (!(this.options.datasource instanceof Datasource)) {
       this.options.datasource = new Datasource();
+    }
+    
+    if (!(this.options.renderer instanceof Renderer)) {
+      this.options.renderer = new Renderer();
     }
 
     this.initialized = true;
@@ -78,6 +83,7 @@ var Everlist = (function() {
 
   // Expose submodules
   Everlist.Datasource = Datasource;
+  Everlist.Renderer = Renderer;
 
   return Everlist;
 }());
@@ -99,7 +105,32 @@ $.fn.everlist = function(options) {
 
 module.exports = Everlist;
 
-},{"./datasource":1,"./utilities":3}],3:[function(_dereq_,module,exports){
+},{"./datasource":1,"./renderer":3,"./utilities":4}],3:[function(_dereq_,module,exports){
+var utilities = _dereq_('./utilities');
+
+var Renderer = (function() {
+
+  function Renderer(template) {
+    this.template = utilities.template(template || "<li><%= item %></li>");
+  }
+
+  Renderer.prototype.render = function(object) {
+    return this.template({item: object});
+  };
+
+  Renderer.prototype.renderBatch = function(objects) {
+    return utilities.reduce(objects, utilities.bind(function(memo, object) {
+      memo += this.render(object);
+      return memo;
+    }, this), "");
+  };
+
+  return Renderer;
+}());
+
+module.exports = Renderer;
+
+},{"./utilities":4}],4:[function(_dereq_,module,exports){
 // Utilities
 var now = Date.now || function() { return new Date().getTime(); };
 
@@ -122,8 +153,10 @@ var debounce = function(func, wait, immediate) {
 
 var ctor = function(){};
 
+var slice = Array.prototype.slice;
+
 var bind = function(func, context) {
-  var args, bound, nativeBind = Function.prototype.bind, slice = Array.prototype.slice;
+  var args, bound, nativeBind = Function.prototype.bind;
 
   if (nativeBind && func.bind === nativeBind) {
     return nativeBind.apply(func, slice.call(arguments, 1));
@@ -154,10 +187,116 @@ var isArray = Array.isArray || function(obj) {
   return Object.prototype.toString.call(obj) === '[object Array]';
 };
 
+var nativeReduce = Array.prototype.reduce;
+var reduce = function( object, callback /*, initialValue*/ ) {
+  if (nativeReduce) {
+    return nativeReduce.apply(object, slice.call(arguments, 1));
+  }
+
+  if ( null === object || 'undefined' === typeof object ) {
+    throw new TypeError(
+       'reduce called on null or undefined' );
+  }
+  if ( 'function' !== typeof callback ) {
+    throw new TypeError( callback + ' is not a function' );
+  }
+  var t = Object( object ), len = t.length >>> 0, k = 0, value;
+  if ( arguments.length >= 2 ) {
+    value = arguments[1];
+  } else {
+    while ( k < len && !(k in t)) {
+      k++;
+    }
+    if ( k >= len ) {
+      throw new TypeError('Reduce of empty array with no initial value');
+    }
+    value = t[ k++ ];
+  }
+  for ( ; k < len ; k++ ) {
+    if ( k in t ) {
+       value = callback( value, t[k], k, t );
+    }
+  }
+  return value;
+};
+
+var template = (function() {
+  var settings = {
+      evaluate: /<%([\s\S]+?)%>/g,
+      interpolate: /<%=([\s\S]+?)%>/g,
+      escape: /<%-([\s\S]+?)%>/g
+  };
+
+  var noMatch = /.^/;
+
+  var escapes = {
+      '\\': '\\',
+      "'": "'",
+      'r': '\r',
+      'n': '\n',
+      't': '\t',
+      'u2028': '\u2028',
+      'u2029': '\u2029'
+  };
+
+  for (var p in escapes) {
+      escapes[escapes[p]] = p;
+  }
+
+  var escaper = /\\|'|\r|\n|\t|\u2028|\u2029/g;
+  var unescaper = /\\(\\|'|r|n|t|u2028|u2029)/g;
+
+  return function (text, data, objectName) {
+      settings.variable = objectName;
+
+      var source = "__p+='" + text
+        .replace(escaper, function (match) {
+          return '\\' + escapes[match];
+        })
+        .replace(settings.escape || noMatch, function (match, code) {
+          return "'+\n_.escape(" + unescape(code) + ")+\n'";
+        })
+        .replace(settings.interpolate || noMatch, function (match, code) {
+          return "'+\n(" + unescape(code) + ")+\n'";
+        })
+        .replace(settings.evaluate || noMatch, function (match, code) {
+          return "';\n" + unescape(code) + "\n;__p+='";
+        }) + "';\n";
+
+      // If a variable is not specified, place data values in local scope.
+      if (!settings.variable) {
+        source = 'with(obj||{}){\n' + source + '}\n';
+      }
+
+      source = "var __p='';var print=function(){__p+=Array.prototype.join.call(arguments, '')};\n" + source + "return __p;\n";
+
+      /* jshint ignore:start */
+      var render = new Function(settings.variable || 'obj', source);
+
+      if (data) {
+        return render(data);
+      }
+
+      var template = function (data) {
+        return render.call(this, data);
+      };
+      /* jshint ignore:end */
+
+      // Provide the compiled function source as a convenience for build time
+      // precompilation.
+      template.source = 'function(' + (settings.variable || 'obj') + '){\n' + source + '}';
+
+      return template;
+  };
+
+}());
+
 module.exports = {
   debounce: debounce,
   bind: bind,
-  isArray: isArray
+  isArray: isArray,
+  template: template,
+  reduce: reduce
 };
 
 },{}]},{},[2])

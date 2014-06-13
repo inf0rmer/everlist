@@ -1,5 +1,6 @@
 var utilities = require('./utilities');
 var Datasource = require('./datasource');
+var Renderer = require('./renderer');
 
 // Main object
 var Everlist = (function() {
@@ -22,6 +23,10 @@ var Everlist = (function() {
 
     if (!(this.options.datasource instanceof Datasource)) {
       this.options.datasource = new Datasource();
+    }
+    
+    if (!(this.options.renderer instanceof Renderer)) {
+      this.options.renderer = new Renderer();
     }
 
     this.initialized = true;
@@ -51,6 +56,7 @@ var Everlist = (function() {
 
   // Expose submodules
   Everlist.Datasource = Datasource;
+  Everlist.Renderer = Renderer;
 
   return Everlist;
 }());
