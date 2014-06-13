@@ -19,7 +19,7 @@
         describe('#items', function() {
           it('Bootstraps the "items" array with data', function() {
             var ds = new Datasource(["one", "two", "three"]);
-            expect(ds.items).toEqual(["one", "two", "three"]);
+            expect(ds.items.map(function(item) { return item.data; })).toEqual(["one", "two", "three"]);
           });
 
           it('Only accepts Arrays when bootstrapping "items"', function() {
@@ -35,6 +35,17 @@
             var ds = new Datasource(null, {page: 0});
             expect(ds.options).toEqual({page: 0});
           });
+        });
+      });
+
+      describe('#addObject', function() {
+        beforeEach(function() {
+          this.ds = new Datasource();
+        });
+
+        it('appends a new item to the "items" array', function() {
+          this.ds.addObject('one');
+          expect(this.ds.items.length).toBe(1);
         });
       });
 
@@ -56,7 +67,7 @@
         });
 
         it('returns the item at the given index', function() {
-          expect(this.ds.itemAtIndex(1)).toEqual(stub[1]);
+          expect(this.ds.itemAtIndex(1).data).toEqual(stub[1]);
         });
       });
 
