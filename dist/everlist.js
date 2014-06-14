@@ -56,7 +56,8 @@ var Everlist = (function() {
 
   defaults = {
     padding: 0,
-    interval: 350
+    interval: 350,
+    renderOnInit: false
   };
 
   wrapInnerContent = function($el) {
@@ -159,6 +160,10 @@ $.fn.everlist = function(options) {
     // Instantiate
     if (!data.initialized) {
       $this.data('everlist', (data = new Everlist($this, options)));
+    }
+
+    if (typeof options === 'string') {
+      data[options]();
     }
   });
 };

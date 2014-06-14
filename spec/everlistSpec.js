@@ -214,6 +214,13 @@
           expect($('#specimen').data('everlist').$el.attr('id')).toEqual('specimen');
         });
       });
+
+      it('executes a method in Everlist if called with a string argument', function() {
+        var renderSpy = spyOn(Everlist.prototype, 'renderNeeded');
+
+        $('#specimen').everlist('renderNeeded');
+        expect(renderSpy).toHaveBeenCalled();
+      });
     });
   });
 }());

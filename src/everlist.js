@@ -116,6 +116,10 @@ $.fn.everlist = function(options) {
     if (!data.initialized) {
       $this.data('everlist', (data = new Everlist($this, options)));
     }
+
+    if (typeof options === 'string') {
+      data[options]();
+    }
   });
 };
 
