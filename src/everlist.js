@@ -4,7 +4,11 @@ var Renderer = require('./renderer');
 
 // Main object
 var Everlist = (function() {
-  var defaults, wrapInnerContent;
+  var defaults,
+    wrapInnerContent,
+    getUnrenderedItems,
+    markAsRendered,
+    hasUnrenderedItems;
 
   defaults = {
     padding: 0,
@@ -15,6 +19,24 @@ var Everlist = (function() {
     if (!$el.find('.everlist-inner-').length) {
       $el.contents().wrapAll("<div class='everlist-inner' />");
     }
+  };
+
+  getUnrenderedItems = function(items) {
+    return items.filter(function(item) {
+      return (!item.rendered);
+    });
+  };
+
+  markAsRendered = function(items) {
+    items.forEach(function(item) {
+      item.rendered = true;
+    });
+  };
+
+  hasUnrenderedItems = function(items) {
+    return items.some(function(item) {
+      return (!item.rendered);
+    });
   };
 
   function Everlist($el, options) {
@@ -53,7 +75,26 @@ var Everlist = (function() {
   };
 
   Everlist.prototype._load = function() {
-    this.options.datasource.load(function() {});
+    if (hasUnrenderedItems(this.options.datasource.items)) {
+      this.renderNeeded();
+    } else {
+      this.options.datasource.load(function() {});
+    }
+  };
+
+  Everlist.prototype.renderNeeded = function() {
+    var toRender, html;
+
+    toRender = getUnrenderedItems(this.options.datasource.items)
+                .slice(0, 10);
+
+    markAsRendered(toRender);
+
+    html = this.options.renderer.renderBatch(toRender.map(function(item) {
+      return item.data;
+    }));
+
+    this.$el.append(html);
   };
 
   // Expose submodules

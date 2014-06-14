@@ -91,13 +91,31 @@
           this.everlist = new Everlist('#specimen', {padding: 50});
         });
 
-        it('calls the #load method on the datasource', function() {
-          var loadSpy = spyOn(this.everlist.options.datasource, 'load');
+        describe('When there are no items that need rendering', function() {
+          beforeEach(function() {
+            this.everlist.options.datasource = new Everlist.Datasource([]);
+          });
 
-          this.everlist._load();
-          expect(loadSpy).toHaveBeenCalledWith(jasmine.any(Function));
+          it('calls the #load method on the datasource', function() {
+            var loadSpy = spyOn(this.everlist.options.datasource, 'load');
+
+            this.everlist._load();
+            expect(loadSpy).toHaveBeenCalledWith(jasmine.any(Function));
+          });
         });
 
+        describe('When there are items that need rendering', function() {
+          beforeEach(function() {
+            this.everlist.options.datasource = new Everlist.Datasource([1, 2, 3, 4, 5]);
+          });
+
+          it('calls the #renderNeededMethod', function() {
+            var renderSpy = spyOn(this.everlist, 'renderNeeded');
+
+            this.everlist._load();
+            expect(renderSpy).toHaveBeenCalled();
+          });
+        });
       });
 
       describe('#startMonitoring', function() {
@@ -129,6 +147,35 @@
             done();
           }, this.everlist.options.timeout);
         });
+      });
+    });
+
+    describe('#renderNeeded', function() {
+      beforeEach(function(){
+        this.everlist = new Everlist('#specimen', {
+          datasource: new Everlist.Datasource([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
+        });
+
+        this.renderSpy = spyOn(this.everlist.options.renderer, 'renderBatch');
+      });
+
+      it('Gets a maximum of ten unrendered items', function() {
+        this.everlist.renderNeeded();
+        expect(this.renderSpy.calls.argsFor(0)[0].length).toEqual(10);
+      });
+
+      it('Unwraps the items before rendering', function() {
+        this.everlist.renderNeeded();
+        expect(this.renderSpy.calls.argsFor(0)[0]).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+      });
+
+      it('Marks the items about to be rendered as rendered', function() {
+        var items = this.everlist.options.datasource.items.slice(0, 10);
+        this.everlist.renderNeeded();
+
+        expect(items.every(function(item) {
+          return (item.rendered);
+        })).toBeTruthy();
       });
     });
 
