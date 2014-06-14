@@ -1,4 +1,5 @@
 var utilities = require('./utilities');
+var Item = require('./item');
 
 var Datasource = (function() {
   function Datasource(items, options) {
@@ -6,9 +7,19 @@ var Datasource = (function() {
       throw new Error('"items" should be an array');
     }
 
-    this.items = (items) ? Array.prototype.slice.call(items, 0) : [];
+    this.items = [];
+
+    if (items) {
+      items.forEach(utilities.bind(this.addObject, this));
+    }
+
     this.options = options || {};
   }
+
+  Datasource.prototype.addObject = function(obj) {
+    var item = new Item(obj);
+    this.items.push(item);
+  };
 
   Datasource.prototype.numberOfItems = function() {
     return this.items.length;
