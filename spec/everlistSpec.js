@@ -191,6 +191,11 @@
           return (item.rendered);
         })).toBeTruthy();
       });
+
+      it('Triggers a jQuery event when items are rendered', function(done) {
+        $(this.everlist).on('rendered', done);
+        this.everlist.renderNeeded();
+      });
     });
 
     describe('Datasource', function() {

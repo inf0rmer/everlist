@@ -11,7 +11,7 @@ var Datasource = (function() {
     this.items = [];
 
     if (items) {
-      items.forEach(utilities.bind(this.addObject, this));
+      this.addObjects(items);
     }
 
     this.options = options || {};
@@ -20,6 +20,10 @@ var Datasource = (function() {
   Datasource.prototype.addObject = function(obj) {
     var item = new Item(obj);
     this.items.push(item);
+  };
+
+  Datasource.prototype.addObjects = function(items) {
+    items.forEach(utilities.bind(this.addObject, this));
   };
 
   Datasource.prototype.numberOfItems = function() {
@@ -61,9 +65,7 @@ var Everlist = (function() {
   };
 
   wrapInnerContent = function($el) {
-    if (!$el.find('.everlist-inner-').length) {
-      $el.contents().wrapAll("<div class='everlist-inner' />");
-    }
+    $el.html("<div class='everlist-inner' />");
   };
 
   getUnrenderedItems = function(items) {
@@ -98,6 +100,10 @@ var Everlist = (function() {
 
     this.initialized = true;
 
+    wrapInnerContent(this.$el);
+
+    this.startMonitoring();
+
     if (this.options.renderOnInit) {
       this.renderNeeded();
     }
@@ -110,8 +116,6 @@ var Everlist = (function() {
 
   Everlist.prototype.monitor = function() {
     var elHeight, totalHeight, $inner;
-
-    wrapInnerContent(this.$el);
 
     $inner = this.$el.find(".everlist-inner").first();
 
@@ -127,12 +131,12 @@ var Everlist = (function() {
     if (hasUnrenderedItems(this.options.datasource.items)) {
       this.renderNeeded();
     } else {
-      this.options.datasource.load(function() {});
+      this.options.datasource.load(utilities.bind(this.renderNeeded, this));
     }
   };
 
   Everlist.prototype.renderNeeded = function() {
-    var toRender, html;
+    var toRender, html, $items;
 
     toRender = getUnrenderedItems(this.options.datasource.items)
                 .slice(0, 10);
@@ -143,7 +147,10 @@ var Everlist = (function() {
       return item.data;
     }));
 
-    this.$el.append(html);
+    $items = $(html);
+    $(this).trigger('rendered', $items);
+
+    this.$el.find('.everlist-inner').append($items);
   };
 
   // Expose submodules
