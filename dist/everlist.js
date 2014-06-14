@@ -86,7 +86,7 @@ var Everlist = (function() {
 
   function Everlist($el, options) {
     this.$el = $($el);
-    this.options = $.extend(defaults, options);
+    this.options = $.extend({}, defaults, options);
 
     if (!(this.options.datasource instanceof Datasource)) {
       this.options.datasource = new Datasource();
@@ -97,6 +97,10 @@ var Everlist = (function() {
     }
 
     this.initialized = true;
+
+    if (this.options.renderOnInit) {
+      this.renderNeeded();
+    }
   }
 
   Everlist.prototype.startMonitoring = function() {

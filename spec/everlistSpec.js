@@ -37,7 +37,21 @@
             padding: 50,
             interval: 350,
             datasource: jasmine.any(Everlist.Datasource),
-            renderer: jasmine.any(Everlist.Renderer)
+            renderer: jasmine.any(Everlist.Renderer),
+            renderOnInit: false
+          });
+        });
+
+        describe('When "renderOnInit" is set to "true"', function() {
+          beforeEach(function() {
+            this.renderSpy = spyOn(Everlist.prototype, 'renderNeeded');
+            this.everlist = new Everlist('#specimen', {
+              renderOnInit: true
+            });
+          });
+
+          it('calls #renderNeeded after initializing', function() {
+            expect(this.renderSpy).toHaveBeenCalled();
           });
         });
       });
