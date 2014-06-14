@@ -153,6 +153,21 @@ var Everlist = (function() {
     $(this).trigger('rendered', [$(html)]);
   };
 
+  Everlist.prototype.destroy = function() {
+    var $inner;
+
+    this.$el.off(".everlist");
+    this.$el.removeData('everlist');
+
+    $inner = this.$el.find(".everlist-inner");
+
+    if ($inner.children().length) {
+      $inner.children().unwrap();
+    } else {
+      $inner.remove();
+    }
+  };
+
   // Expose submodules
   Everlist.Datasource = Datasource;
   Everlist.Renderer = Renderer;
