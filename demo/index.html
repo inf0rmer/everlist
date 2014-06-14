@@ -2,11 +2,19 @@
 <html>
 <head>
   <title>Everlist demo</title>
+  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./css/style.css">
 </head>
 
 <body>
-  <ul class="list"></ul>
+  <ul id="list"></ul>
 
+  <div class="stats">
+    <p><strong>Items in datasource</strong>: <span data-info="ds-total"></span></p>
+    <p><strong>Items rendered in DOM</strong>: <span data-info="dom-total"></span></p>
+  </div>
+
+  <script src="./js/lib/jquery.js"></script>
   <script src="./js/lib/require.js" data-main="js/main"></script>
 </body>
 </html>

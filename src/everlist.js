@@ -12,13 +12,13 @@ var Everlist = (function() {
 
   defaults = {
     padding: 0,
-    interval: 350
+    interval: 350,
+    renderOnInit: false,
+    renderAtMost: 10
   };
 
   wrapInnerContent = function($el) {
-    if (!$el.find('.everlist-inner-').length) {
-      $el.contents().wrapAll("<div class='everlist-inner' />");
-    }
+    $el.html("<div class='everlist-inner' />");
   };
 
   getUnrenderedItems = function(items) {
@@ -41,7 +41,7 @@ var Everlist = (function() {
 
   function Everlist($el, options) {
     this.$el = $($el);
-    this.options = $.extend(defaults, options);
+    this.options = $.extend({}, defaults, options);
 
     if (!(this.options.datasource instanceof Datasource)) {
       this.options.datasource = new Datasource();
@@ -52,6 +52,14 @@ var Everlist = (function() {
     }
 
     this.initialized = true;
+
+    wrapInnerContent(this.$el);
+
+    this.startMonitoring();
+
+    if (this.options.renderOnInit) {
+      this.renderNeeded();
+    }
   }
 
   Everlist.prototype.startMonitoring = function() {
@@ -61,8 +69,6 @@ var Everlist = (function() {
 
   Everlist.prototype.monitor = function() {
     var elHeight, totalHeight, $inner;
-
-    wrapInnerContent(this.$el);
 
     $inner = this.$el.find(".everlist-inner").first();
 
@@ -78,7 +84,7 @@ var Everlist = (function() {
     if (hasUnrenderedItems(this.options.datasource.items)) {
       this.renderNeeded();
     } else {
-      this.options.datasource.load(function() {});
+      this.options.datasource.load(utilities.bind(this.renderNeeded, this));
     }
   };
 
@@ -86,7 +92,7 @@ var Everlist = (function() {
     var toRender, html;
 
     toRender = getUnrenderedItems(this.options.datasource.items)
-                .slice(0, 10);
+                .slice(0, this.options.renderAtMost);
 
     markAsRendered(toRender);
 
@@ -94,7 +100,9 @@ var Everlist = (function() {
       return item.data;
     }));
 
-    this.$el.append(html);
+    this.$el.find('.everlist-inner').append(html);
+
+    $(this).trigger('rendered', [$(html)]);
   };
 
   // Expose submodules
@@ -115,6 +123,10 @@ $.fn.everlist = function(options) {
     // Instantiate
     if (!data.initialized) {
       $this.data('everlist', (data = new Everlist($this, options)));
+    }
+
+    if (typeof options === 'string') {
+      data[options]();
     }
   });
 };

@@ -10,7 +10,7 @@ var Datasource = (function() {
     this.items = [];
 
     if (items) {
-      items.forEach(utilities.bind(this.addObject, this));
+      this.addObjects(items);
     }
 
     this.options = options || {};
@@ -19,6 +19,10 @@ var Datasource = (function() {
   Datasource.prototype.addObject = function(obj) {
     var item = new Item(obj);
     this.items.push(item);
+  };
+
+  Datasource.prototype.addObjects = function(items) {
+    items.forEach(utilities.bind(this.addObject, this));
   };
 
   Datasource.prototype.numberOfItems = function() {

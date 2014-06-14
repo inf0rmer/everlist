@@ -48,6 +48,17 @@
           expect(this.ds.items.length).toBe(1);
         });
       });
+      
+      describe('#addObjects', function() {
+        beforeEach(function() {
+          this.ds = new Datasource();
+        });
+
+        it('appends an array of items to the "items" array', function() {
+          this.ds.addObjects(['one', 'two', 'three']);
+          expect(this.ds.items.length).toBe(3);
+        });
+      });
 
       describe('#numberOfItems', function() {
         var stub = ["one", "two", "three"];
