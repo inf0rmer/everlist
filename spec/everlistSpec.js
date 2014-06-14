@@ -199,6 +199,44 @@
       });
     });
 
+    describe('#destroy', function() {
+      beforeEach(function(){
+        this.everlist = new Everlist('#specimen');
+      });
+
+      it('Removes the scroll event', function() {
+        var monitorSpy = spyOn(this.everlist, 'monitor');
+
+        this.everlist.startMonitoring();
+
+        this.everlist.destroy();
+
+        $('#specimen').trigger('scroll');
+        expect(monitorSpy).not.toHaveBeenCalled();
+      });
+
+      describe('When the list is populated', function() {
+        beforeEach(function() {
+          this.everlist.$el.find('.everlist-inner').append('<li></li>');
+        });
+
+        it('Unwraps the list', function() {
+          this.everlist.destroy();
+
+          expect(this.everlist.$el.find('.everlist-inner').length).toBe(0);
+          expect(this.everlist.$el.children().length).toBe(1);
+        });
+      });
+
+      describe('When the list is not populated', function() {
+        it('Unwraps the list', function() {
+          this.everlist.destroy();
+
+          expect(this.everlist.$el.find('.everlist-inner').length).toBe(0);
+        });
+      });
+    });
+
     describe('Datasource', function() {
       describe('When initializing', function() {
         it('instantiates a simple datasource if one is not provided', function() {
