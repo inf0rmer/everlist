@@ -38,7 +38,8 @@
             interval: 350,
             datasource: jasmine.any(Everlist.Datasource),
             renderer: jasmine.any(Everlist.Renderer),
-            renderOnInit: false
+            renderOnInit: false,
+            renderAtMost: 10
           });
         });
 
@@ -173,9 +174,9 @@
         this.renderSpy = spyOn(this.everlist.options.renderer, 'renderBatch');
       });
 
-      it('Gets a maximum of ten unrendered items', function() {
+      it('Gets "options.renderAtMost" unrendered items', function() {
         this.everlist.renderNeeded();
-        expect(this.renderSpy.calls.argsFor(0)[0].length).toEqual(10);
+        expect(this.renderSpy.calls.argsFor(0)[0].length).toEqual(this.everlist.options.renderAtMost);
       });
 
       it('Unwraps the items before rendering', function() {

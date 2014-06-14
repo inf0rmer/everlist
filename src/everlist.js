@@ -13,7 +13,8 @@ var Everlist = (function() {
   defaults = {
     padding: 0,
     interval: 350,
-    renderOnInit: false
+    renderOnInit: false,
+    renderAtMost: 10
   };
 
   wrapInnerContent = function($el) {
@@ -88,10 +89,10 @@ var Everlist = (function() {
   };
 
   Everlist.prototype.renderNeeded = function() {
-    var toRender, html, $items;
+    var toRender, html;
 
     toRender = getUnrenderedItems(this.options.datasource.items)
-                .slice(0, 10);
+                .slice(0, this.options.renderAtMost);
 
     markAsRendered(toRender);
 
@@ -99,10 +100,9 @@ var Everlist = (function() {
       return item.data;
     }));
 
-    $items = $(html);
-    $(this).trigger('rendered', $items);
+    this.$el.find('.everlist-inner').append(html);
 
-    this.$el.find('.everlist-inner').append($items);
+    $(this).trigger('rendered', [$(html)]);
   };
 
   // Expose submodules
