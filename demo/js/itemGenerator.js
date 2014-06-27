@@ -9,7 +9,9 @@ define([], function(){
         description: "Description " + id
       });
     }
-    callback(null, data);
+    setTimeout(function() {
+      callback(null, data);
+    }, 250);
   };
 
   return getFakeData;

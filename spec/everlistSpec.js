@@ -55,6 +55,17 @@
             expect(this.renderSpy).toHaveBeenCalled();
           });
         });
+
+        describe('When the dataSource is empty', function() {
+          beforeEach(function() {
+            this.loadSpy = spyOn(Everlist.prototype, '_load');
+            this.everlist = new Everlist('#specimen');
+          });
+
+          it('calls #_load after initializing', function() {
+            expect(this.loadSpy).toHaveBeenCalled();
+          });
+        });
       });
 
       describe('#monitor', function() {

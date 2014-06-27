@@ -60,6 +60,10 @@ var Everlist = (function() {
     if (this.options.renderOnInit) {
       this.renderNeeded();
     }
+
+    if (this.options.datasource.items.length === 0) {
+      this._load();
+    }
   }
 
   Everlist.prototype.startMonitoring = function() {
