@@ -9,14 +9,10 @@ define([
 
   $(function() {
     // Seed with initial data
-    var initialItems, offset = 0, limit = 50;
-    itemGenerator(offset, limit, function(err, data) {
-      offset += limit;
-      initialItems = data;
-    });
+    var offset = 0, limit = 50;
 
     // Configure a datasource
-    var source = new Everlist.Datasource(initialItems);
+    var source = new Everlist.Datasource();
     source.load = function(done) {
       // Randomize limit
       limit = getRandomLimit();
